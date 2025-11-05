@@ -1,0 +1,2337 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "BackOffice ERP REST API",
+    "description": "Comprehensive REST API for BackOffice ERP system with full CRUD operations for all entities",
+    "version": "2.0.8",
+    "contact": {
+      "name": "BackOffice ERP",
+      "url": "https://backofficeerp.com"
+    }
+  },
+  "security": [
+    {
+      "authtoken": []
+    }
+  ],
+  "paths": {
+    "/api/login/auth": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Authenticate user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {"type": "string"},
+                  "password": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "token": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login/key": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Get API key information",
+        "responses": {
+          "200": {
+            "description": "API key information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "key": {"type": "string"},
+                    "expiration": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contacts": {
+      "get": {
+        "tags": ["Contacts"],
+        "summary": "Get all contacts",
+        "responses": {
+          "200": {
+            "description": "List of contacts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Contact"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Contacts"],
+        "summary": "Create new contact",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ContactInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contact created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Contact"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{id}": {
+      "get": {
+        "tags": ["Contacts"],
+        "summary": "Get contact by ID",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Contact details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Contact"}
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Contacts"],
+        "summary": "Update contact",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ContactInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contact updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Contact"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Contacts"],
+        "summary": "Delete contact",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Contact deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/invoices": {
+      "get": {
+        "tags": ["Invoices"],
+        "summary": "Get all invoices",
+        "responses": {
+          "200": {
+            "description": "List of invoices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Invoice"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Invoices"],
+        "summary": "Create new invoice",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/InvoiceInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Invoice created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Invoice"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices/{id}": {
+      "get": {
+        "tags": ["Invoices"],
+        "summary": "Get invoice by ID",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Invoice"}
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Invoices"],
+        "summary": "Update invoice",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/InvoiceInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invoice updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Invoice"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Invoices"],
+        "summary": "Delete invoice",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/projects": {
+      "get": {
+        "tags": ["Projects"],
+        "summary": "Get all projects",
+        "responses": {
+          "200": {
+            "description": "List of projects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Project"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Projects"],
+        "summary": "Create new project",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ProjectInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Project created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Project"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{id}": {
+      "get": {
+        "tags": ["Projects"],
+        "summary": "Get project by ID",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Project details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Project"}
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Projects"],
+        "summary": "Update project",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ProjectInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Project updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Project"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Projects"],
+        "summary": "Delete project",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Project deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get all tasks",
+        "responses": {
+          "200": {
+            "description": "List of tasks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Task"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Create new task",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/TaskInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Task created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Task"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get task by ID",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Task details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Task"}
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tasks"],
+        "summary": "Update task",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/TaskInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Task"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tasks"],
+        "summary": "Delete task",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Task deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/tickets": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Get all tickets",
+        "responses": {
+          "200": {
+            "description": "List of tickets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Ticket"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tickets"],
+        "summary": "Create new ticket",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/TicketInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ticket created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Ticket"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/{id}": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Get ticket by ID",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Ticket"}
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tickets"],
+        "summary": "Update ticket",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/TicketInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ticket updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Ticket"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tickets"],
+        "summary": "Delete ticket",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/leads": {
+      "get": {
+        "tags": ["Leads"],
+        "summary": "Get all leads",
+        "responses": {
+          "200": {
+            "description": "List of leads",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Lead"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Leads"],
+        "summary": "Create new lead",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/LeadInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Lead created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Lead"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/leads/{id}": {
+      "get": {
+        "tags": ["Leads"],
+        "summary": "Get lead by ID",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Lead details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Lead"}
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Leads"],
+        "summary": "Update lead",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/LeadInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lead updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Lead"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Leads"],
+        "summary": "Delete lead",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Lead deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "tags": ["Search"],
+        "summary": "Search across all entities",
+        "parameters": [
+          {"name": "q", "in": "query", "required": true, "schema": {"type": "string"}},
+          {"name": "type", "in": "query", "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {"type": "object"}
+                    },
+                    "type": {"type": "string"},
+                    "search_heading": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/custom_fields/{entity}": {
+      "get": {
+        "tags": ["Custom Fields"],
+        "summary": "Get custom fields for entity",
+        "parameters": [
+          {"name": "entity", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Custom fields for entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/CustomField"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/calendar": {
+      "get": {
+        "tags": ["Calendar"],
+        "summary": "Get calendar events",
+        "responses": {
+          "200": {
+            "description": "Calendar events retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/CalendarEvent"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Calendar"],
+        "summary": "Create calendar event",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CalendarEventInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Calendar event created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Calendar"],
+        "summary": "Update calendar event",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CalendarEventInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Calendar event updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/CalendarEvent"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Calendar"],
+        "summary": "Delete calendar event",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Calendar event deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/credit_notes": {
+      "get": {
+        "tags": ["Credit Notes"],
+        "summary": "Get all credit notes",
+        "responses": {
+          "200": {
+            "description": "Credit notes retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/CreditNote"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Credit Notes"],
+        "summary": "Create credit note",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CreditNoteInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Credit note created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Credit Notes"],
+        "summary": "Update credit note",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CreditNoteInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Credit note updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/CreditNote"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Credit Notes"],
+        "summary": "Delete credit note",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Credit note deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/customers": {
+      "get": {
+        "tags": ["Customers"],
+        "summary": "Get all customers",
+        "responses": {
+          "200": {
+            "description": "Customers retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Customer"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Customers"],
+        "summary": "Create customer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CustomerInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Customer created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Customers"],
+        "summary": "Update customer",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CustomerInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Customer"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Customers"],
+        "summary": "Delete customer",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/estimates": {
+      "get": {
+        "tags": ["Estimates"],
+        "summary": "Get all estimates",
+        "responses": {
+          "200": {
+            "description": "Estimates retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Estimate"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Estimates"],
+        "summary": "Create estimate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/EstimateInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Estimate created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Estimates"],
+        "summary": "Update estimate",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/EstimateInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Estimate updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Estimate"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Estimates"],
+        "summary": "Delete estimate",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Estimate deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/expenses": {
+      "get": {
+        "tags": ["Expenses"],
+        "summary": "Get all expenses",
+        "responses": {
+          "200": {
+            "description": "Expenses retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Expense"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Expenses"],
+        "summary": "Create expense",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ExpenseInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Expense created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Expenses"],
+        "summary": "Update expense",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ExpenseInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Expense updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Expense"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Expenses"],
+        "summary": "Delete expense",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Expense deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/items": {
+      "get": {
+        "tags": ["Items"],
+        "summary": "Get all items",
+        "responses": {
+          "200": {
+            "description": "Items retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Item"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Items"],
+        "summary": "Create item",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ItemInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Items"],
+        "summary": "Update item",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ItemInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Item"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Items"],
+        "summary": "Delete item",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/milestones": {
+      "get": {
+        "tags": ["Milestones"],
+        "summary": "Get all milestones",
+        "responses": {
+          "200": {
+            "description": "Milestones retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Milestone"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Milestones"],
+        "summary": "Create milestone",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/MilestoneInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Milestone created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Milestones"],
+        "summary": "Update milestone",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/MilestoneInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Milestone updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Milestone"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Milestones"],
+        "summary": "Delete milestone",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Milestone deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/payments": {
+      "get": {
+        "tags": ["Payments"],
+        "summary": "Get all payments",
+        "responses": {
+          "200": {
+            "description": "Payments retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Payment"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Payments"],
+        "summary": "Create payment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/PaymentInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Payments"],
+        "summary": "Update payment",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/PaymentInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Payment"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Payments"],
+        "summary": "Delete payment",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/proposals": {
+      "get": {
+        "tags": ["Proposals"],
+        "summary": "Get all proposals",
+        "responses": {
+          "200": {
+            "description": "Proposals retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Proposal"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Proposals"],
+        "summary": "Create proposal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ProposalInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Proposal created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Proposals"],
+        "summary": "Update proposal",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ProposalInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Proposal updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Proposal"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Proposals"],
+        "summary": "Delete proposal",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Proposal deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/staffs": {
+      "get": {
+        "tags": ["Staff"],
+        "summary": "Get all staff members",
+        "responses": {
+          "200": {
+            "description": "Staff members retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Staff"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Staff"],
+        "summary": "Create staff member",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/StaffInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Staff member created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Staff"],
+        "summary": "Update staff member",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/StaffInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Staff member updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Staff"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Staff"],
+        "summary": "Delete staff member",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Staff member deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/subscriptions": {
+      "get": {
+        "tags": ["Subscriptions"],
+        "summary": "Get all subscriptions",
+        "responses": {
+          "200": {
+            "description": "Subscriptions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Subscription"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Subscriptions"],
+        "summary": "Create subscription",
+        "requestBody": {
+          "required": true,
+          "content": {                                                 
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/SubscriptionInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Subscription created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Subscriptions"],
+        "summary": "Update subscription",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/SubscriptionInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Subscription"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Subscriptions"],
+        "summary": "Delete subscription",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/timesheets": {
+      "get": {
+        "tags": ["Timesheets"],
+        "summary": "Get all timesheets",
+        "responses": {
+          "200": {
+            "description": "Timesheets retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Timesheet"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Timesheets"],
+        "summary": "Create timesheet",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/TimesheetInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Timesheet created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Timesheets"],
+        "summary": "Update timesheet",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/TimesheetInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Timesheet updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Timesheet"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Timesheets"],
+        "summary": "Delete timesheet",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Timesheet deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/contracts": {
+      "get": {
+        "tags": ["Contracts"],
+        "summary": "Get all contracts",
+        "responses": {
+          "200": {
+            "description": "Contracts retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Contract"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Contracts"],
+        "summary": "Create contract",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ContractInput"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contract created successfully"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Contracts"],
+        "summary": "Update contract",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ContractInput"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contract updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Contract"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Contracts"],
+        "summary": "Delete contract",
+        "parameters": [
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Contract deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/common": {
+      "get": {
+        "tags": ["Common"],
+        "summary": "Get common data",
+        "parameters": [
+          {"name": "type", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {
+            "description": "Common data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "boolean"},
+                    "data": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "authtoken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "authtoken",
+        "description": "Authentication token from admin area"
+      }
+    },
+    "schemas": {
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "firstname": {"type": "string"},
+          "lastname": {"type": "string"},
+          "email": {"type": "string"},
+          "phonenumber": {"type": "string"},
+          "title": {"type": "string"},
+          "userid": {"type": "integer"}
+        }
+      },
+      "ContactInput": {
+        "type": "object",
+        "required": ["firstname", "lastname", "email"],
+        "properties": {
+          "firstname": {"type": "string"},
+          "lastname": {"type": "string"},
+          "email": {"type": "string"},
+          "phonenumber": {"type": "string"},
+          "title": {"type": "string"},
+          "userid": {"type": "integer"}
+        }
+      },
+      "Invoice": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "number": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "duedate": {"type": "string", "format": "date"},
+          "currency": {"type": "integer"},
+          "subtotal": {"type": "number"},
+          "total": {"type": "number"},
+          "status": {"type": "integer"}
+        }
+      },
+      "InvoiceInput": {
+        "type": "object",
+        "required": ["clientid", "date", "duedate", "currency"],
+        "properties": {
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "duedate": {"type": "string", "format": "date"},
+          "currency": {"type": "integer"},
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {"type": "string"},
+                "qty": {"type": "number"},
+                "rate": {"type": "number"},
+                "taxname": {"type": "string"},
+                "taxrate": {"type": "number"}
+              }
+            }
+          }
+        }
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "start_date": {"type": "string", "format": "date"},
+          "deadline": {"type": "string", "format": "date"},
+          "status": {"type": "integer"}
+        }
+      },
+      "ProjectInput": {
+        "type": "object",
+        "required": ["name", "clientid"],
+        "properties": {
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "start_date": {"type": "string", "format": "date"},
+          "deadline": {"type": "string", "format": "date"},
+          "status": {"type": "integer"}
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "project_id": {"type": "integer"},
+          "assigned": {"type": "integer"},
+          "startdate": {"type": "string", "format": "date"},
+          "duedate": {"type": "string", "format": "date"},
+          "status": {"type": "integer"}
+        }
+      },
+      "TaskInput": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "project_id": {"type": "integer"},
+          "assigned": {"type": "integer"},
+          "startdate": {"type": "string", "format": "date"},
+          "duedate": {"type": "string", "format": "date"},
+          "status": {"type": "integer"}
+        }
+      },
+      "Ticket": {
+        "type": "object",
+        "properties": {
+          "ticketid": {"type": "integer"},
+          "subject": {"type": "string"},
+          "message": {"type": "string"},
+          "userid": {"type": "integer"},
+          "contactid": {"type": "integer"},
+          "department": {"type": "integer"},
+          "priority": {"type": "integer"},
+          "status": {"type": "integer"}
+        }
+      },
+      "TicketInput": {
+        "type": "object",
+        "required": ["subject", "message", "userid", "department"],
+        "properties": {
+          "subject": {"type": "string"},
+          "message": {"type": "string"},
+          "userid": {"type": "integer"},
+          "contactid": {"type": "integer"},
+          "department": {"type": "integer"},
+          "priority": {"type": "integer"},
+          "status": {"type": "integer"}
+        }
+      },
+      "Lead": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "title": {"type": "string"},
+          "company": {"type": "string"},
+          "email": {"type": "string"},
+          "phonenumber": {"type": "string"},
+          "address": {"type": "string"},
+          "city": {"type": "string"},
+          "state": {"type": "string"},
+          "zip": {"type": "string"},
+          "status": {"type": "integer"}
+        }
+      },
+      "LeadInput": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string"},
+          "title": {"type": "string"},
+          "company": {"type": "string"},
+          "email": {"type": "string"},
+          "phonenumber": {"type": "string"},
+          "address": {"type": "string"},
+          "city": {"type": "string"},
+          "state": {"type": "string"},
+          "zip": {"type": "string"},
+          "status": {"type": "integer"}
+        }
+      },
+      "CustomField": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "fieldto": {"type": "string"},
+          "type": {"type": "string"},
+          "options": {"type": "string"},
+          "required": {"type": "integer"},
+          "active": {"type": "integer"}
+        }
+      },
+      "CalendarEvent": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "title": {"type": "string"},
+          "description": {"type": "string"},
+          "start": {"type": "string", "format": "date-time"},
+          "end": {"type": "string", "format": "date-time"},
+          "color": {"type": "string"},
+          "userid": {"type": "integer"}
+        }
+      },
+      "CalendarEventInput": {
+        "type": "object",
+        "required": ["title", "start"],
+        "properties": {
+          "title": {"type": "string"},
+          "description": {"type": "string"},
+          "start": {"type": "string", "format": "date-time"},
+          "end": {"type": "string", "format": "date-time"},
+          "color": {"type": "string"},
+          "userid": {"type": "integer"}
+        }
+      },
+      "CreditNote": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "number": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "currency": {"type": "integer"},
+          "subtotal": {"type": "number"},
+          "total": {"type": "number"},
+          "status": {"type": "integer"}
+        }
+      },
+      "CreditNoteInput": {
+        "type": "object",
+        "required": ["clientid", "date", "currency"],
+        "properties": {
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "currency": {"type": "integer"},
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {"type": "string"},
+                "qty": {"type": "number"},
+                "rate": {"type": "number"},
+                "taxname": {"type": "string"},
+                "taxrate": {"type": "number"}
+              }
+            }
+          }
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "company": {"type": "string"},
+          "email": {"type": "string"},
+          "phone": {"type": "string"},
+          "address": {"type": "string"},
+          "city": {"type": "string"},
+          "state": {"type": "string"},
+          "zip": {"type": "string"},
+          "country": {"type": "string"},
+          "website": {"type": "string"},
+          "created": {"type": "string", "format": "date-time"}
+        }
+      },
+      "CustomerInput": {
+        "type": "object",
+        "required": ["company"],
+        "properties": {
+          "company": {"type": "string"},
+          "email": {"type": "string"},
+          "phone": {"type": "string"},
+          "address": {"type": "string"},
+          "city": {"type": "string"},
+          "state": {"type": "string"},
+          "zip": {"type": "string"},
+          "country": {"type": "string"},
+          "website": {"type": "string"}
+        }
+      },
+      "Estimate": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "number": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "duedate": {"type": "string", "format": "date"},
+          "currency": {"type": "integer"},
+          "subtotal": {"type": "number"},
+          "total": {"type": "number"},
+          "status": {"type": "integer"}
+        }
+      },
+      "EstimateInput": {
+        "type": "object",
+        "required": ["clientid", "date", "duedate", "currency"],
+        "properties": {
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "duedate": {"type": "string", "format": "date"},
+          "currency": {"type": "integer"},
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {"type": "string"},
+                "qty": {"type": "number"},
+                "rate": {"type": "number"},
+                "taxname": {"type": "string"},
+                "taxrate": {"type": "number"}
+              }
+            }
+          }
+        }
+      },
+      "Expense": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "category": {"type": "string"},
+          "amount": {"type": "number"},
+          "date": {"type": "string", "format": "date"},
+          "description": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "project_id": {"type": "integer"},
+          "currency": {"type": "integer"}
+        }
+      },
+      "ExpenseInput": {
+        "type": "object",
+        "required": ["category", "amount", "date"],
+        "properties": {
+          "category": {"type": "string"},
+          "amount": {"type": "number"},
+          "date": {"type": "string", "format": "date"},
+          "description": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "project_id": {"type": "integer"},
+          "currency": {"type": "integer"}
+        }
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "description": {"type": "string"},
+          "long_description": {"type": "string"},
+          "rate": {"type": "number"},
+          "taxname": {"type": "string"},
+          "taxrate": {"type": "number"},
+          "unit": {"type": "string"},
+          "group_id": {"type": "integer"}
+        }
+      },
+      "ItemInput": {
+        "type": "object",
+        "required": ["description", "rate"],
+        "properties": {
+          "description": {"type": "string"},
+          "long_description": {"type": "string"},
+          "rate": {"type": "number"},
+          "taxname": {"type": "string"},
+          "taxrate": {"type": "number"},
+          "unit": {"type": "string"},
+          "group_id": {"type": "integer"}
+        }
+      },
+      "Milestone": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "project_id": {"type": "integer"},
+          "due_date": {"type": "string", "format": "date"},
+          "status": {"type": "integer"}
+        }
+      },
+      "MilestoneInput": {
+        "type": "object",
+        "required": ["name", "project_id"],
+        "properties": {
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "project_id": {"type": "integer"},
+          "due_date": {"type": "string", "format": "date"},
+          "status": {"type": "integer"}
+        }
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "invoiceid": {"type": "integer"},
+          "amount": {"type": "number"},
+          "paymentmode": {"type": "string"},
+          "paymentmethod": {"type": "string"},
+          "date": {"type": "string", "format": "date"},
+          "note": {"type": "string"},
+          "currency": {"type": "integer"}
+        }
+      },
+      "PaymentInput": {
+        "type": "object",
+        "required": ["invoiceid", "amount", "paymentmode", "date"],
+        "properties": {
+          "invoiceid": {"type": "integer"},
+          "amount": {"type": "number"},
+          "paymentmode": {"type": "string"},
+          "paymentmethod": {"type": "string"},
+          "date": {"type": "string", "format": "date"},
+          "note": {"type": "string"},
+          "currency": {"type": "integer"}
+        }
+      },
+      "Proposal": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "subject": {"type": "string"},
+          "content": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "open_till": {"type": "string", "format": "date"},
+          "currency": {"type": "integer"},
+          "subtotal": {"type": "number"},
+          "total": {"type": "number"},
+          "status": {"type": "integer"}
+        }
+      },
+      "ProposalInput": {
+        "type": "object",
+        "required": ["subject", "content", "clientid", "date"],
+        "properties": {
+          "subject": {"type": "string"},
+          "content": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "open_till": {"type": "string", "format": "date"},
+          "currency": {"type": "integer"},
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {"type": "string"},
+                "qty": {"type": "number"},
+                "rate": {"type": "number"},
+                "taxname": {"type": "string"},
+                "taxrate": {"type": "number"}
+              }
+            }
+          }
+        }
+      },
+      "Staff": {
+        "type": "object",
+        "properties": {
+          "staffid": {"type": "integer"},
+          "firstname": {"type": "string"},
+          "lastname": {"type": "string"},
+          "email": {"type": "string"},
+          "phonenumber": {"type": "string"},
+          "facebook": {"type": "string"},
+          "linkedin": {"type": "string"},
+          "skype": {"type": "string"},
+          "role": {"type": "integer"},
+          "active": {"type": "integer"}
+        }
+      },
+      "StaffInput": {
+        "type": "object",
+        "required": ["firstname", "lastname", "email"],
+        "properties": {
+          "firstname": {"type": "string"},
+          "lastname": {"type": "string"},
+          "email": {"type": "string"},
+          "phonenumber": {"type": "string"},
+          "facebook": {"type": "string"},
+          "linkedin": {"type": "string"},
+          "skype": {"type": "string"},
+          "role": {"type": "integer"},
+          "active": {"type": "integer"}
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "next_billing_cycle": {"type": "string", "format": "date"},
+          "billing_cycle": {"type": "string"},
+          "amount": {"type": "number"},
+          "currency": {"type": "integer"},
+          "status": {"type": "integer"}
+        }
+      },
+      "SubscriptionInput": {
+        "type": "object",
+        "required": ["name", "clientid", "date", "billing_cycle", "amount"],
+        "properties": {
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "next_billing_cycle": {"type": "string", "format": "date"},
+          "billing_cycle": {"type": "string"},
+          "amount": {"type": "number"},
+          "currency": {"type": "integer"},
+          "status": {"type": "integer"}
+        }
+      },
+      "Timesheet": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "project_id": {"type": "integer"},
+          "task_id": {"type": "integer"},
+          "staff_id": {"type": "integer"},
+          "start_time": {"type": "string", "format": "date-time"},
+          "end_time": {"type": "string", "format": "date-time"},
+          "note": {"type": "string"},
+          "hourly_rate": {"type": "number"}
+        }
+      },
+      "TimesheetInput": {
+        "type": "object",
+        "required": ["project_id", "staff_id", "start_time", "end_time"],
+        "properties": {
+          "project_id": {"type": "integer"},
+          "task_id": {"type": "integer"},
+          "staff_id": {"type": "integer"},
+          "start_time": {"type": "string", "format": "date-time"},
+          "end_time": {"type": "string", "format": "date-time"},
+          "note": {"type": "string"},
+          "hourly_rate": {"type": "number"}
+        }
+      },
+      "Contract": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "subject": {"type": "string"},
+          "description": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "duedate": {"type": "string", "format": "date"},
+          "contract_value": {"type": "number"},
+          "currency": {"type": "integer"},
+          "status": {"type": "integer"}
+        }
+      },
+      "ContractInput": {
+        "type": "object",
+        "required": ["subject", "clientid", "date", "duedate"],
+        "properties": {
+          "subject": {"type": "string"},
+          "description": {"type": "string"},
+          "clientid": {"type": "integer"},
+          "date": {"type": "string", "format": "date"},
+          "duedate": {"type": "string", "format": "date"},
+          "contract_value": {"type": "number"},
+          "currency": {"type": "integer"},
+          "status": {"type": "integer"}
+        }
+      }
+    }
+  }
+}
