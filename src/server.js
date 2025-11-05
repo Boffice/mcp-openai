@@ -1,10 +1,18 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import express from 'express';
+import { randomUUID } from 'node:crypto';
 import axios from 'axios';
 import { z } from 'zod';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { serverConfig, apiConfig, securityConfig } from './config.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
+import {
+  serverConfig,
+  apiConfig,
+  securityConfig,
+  httpConfig,
+} from './config.js';
 import {
   loadOpenApiSpec,
   buildOperationsFromSpec,
@@ -27,23 +35,141 @@ async function main() {
     throw new Error('No operations discovered in swagger.json.');
   }
 
+  const specText = JSON.stringify(spec, null, 2);
+  const operationsSummary = buildOperationsSummary(operations);
+
+  const sessions = new Map();
+
+  const app = express();
+  app.use(express.json({ limit: '4mb' }));
+
+  app.post(httpConfig.path, async (req, res) => {
+    const sessionId = extractSessionId(req);
+
+    try {
+      if (sessionId) {
+        const session = sessions.get(sessionId);
+        if (!session) {
+          respondWithJsonError(res, 404, 'Unknown session. Reinitialize your MCP client.');
+          return;
+        }
+        await session.transport.handleRequest(req, res, req.body);
+        return;
+      }
+
+      if (!isInitializeRequest(req.body)) {
+        respondWithJsonError(res, 400, 'Initialization request required before other calls.');
+        return;
+      }
+
+      const session = await createSession({
+        spec,
+        specText,
+        operations,
+        operationsSummary,
+        sessions,
+      });
+
+      await session.transport.handleRequest(req, res, req.body);
+    } catch (error) {
+      handleTransportError(res, error);
+    }
+  });
+
+  const handleSessionRequest = async (req, res) => {
+    const sessionId = extractSessionId(req);
+    if (!sessionId) {
+      respondWithJsonError(res, 400, 'Missing Mcp-Session-Id header.');
+      return;
+    }
+
+    const session = sessions.get(sessionId);
+    if (!session) {
+      respondWithJsonError(res, 404, 'Unknown session. Reinitialize your MCP client.');
+      return;
+    }
+
+    try {
+      await session.transport.handleRequest(req, res);
+    } catch (error) {
+      handleTransportError(res, error);
+    }
+  };
+
+  app.get(httpConfig.path, handleSessionRequest);
+  app.delete(httpConfig.path, handleSessionRequest);
+
+  const server = app.listen(httpConfig.port, httpConfig.host, () => {
+    const hostLabel = httpConfig.host === '0.0.0.0' ? 'localhost' : httpConfig.host;
+    console.log(
+      `${serverConfig.name} listening on http://${hostLabel}:${httpConfig.port}${httpConfig.path}`
+    );
+  });
+
+  server.on('error', (error) => {
+    console.error('Failed to start MCP HTTP server:', error);
+    process.exit(1);
+  });
+}
+
+async function createSession({
+  spec,
+  specText,
+  operations,
+  operationsSummary,
+  sessions,
+}) {
+  const serverInstance = buildServerInstance(spec, specText, operations, operationsSummary);
+  let transport;
+
+  const sessionRecord = {
+    server: serverInstance,
+    transport: undefined,
+  };
+
+  transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: () => randomUUID(),
+    enableJsonResponse: httpConfig.enableJsonResponse,
+    enableDnsRebindingProtection: httpConfig.enableDnsRebindingProtection,
+    allowedHosts: httpConfig.allowedHosts,
+    allowedOrigins: httpConfig.allowedOrigins,
+    onsessioninitialized: async (sessionId) => {
+      sessions.set(sessionId, sessionRecord);
+    },
+    onsessionclosed: async (sessionId) => {
+      sessions.delete(sessionId);
+      await safeCloseServer(sessionRecord.server);
+    },
+  });
+
+  sessionRecord.transport = transport;
+
+  transport.onclose = async () => {
+    if (transport.sessionId) {
+      sessions.delete(transport.sessionId);
+    }
+    await safeCloseServer(sessionRecord.server);
+  };
+
+  await serverInstance.connect(transport);
+
+  return sessionRecord;
+}
+
+function buildServerInstance(spec, specText, operations, operationsSummary) {
   const mcpServer = new McpServer({
     name: serverConfig.name,
     version: serverConfig.version,
     description: spec.info?.description,
   });
 
-  registerResources(mcpServer, spec, operations);
+  registerResources(mcpServer, specText, operationsSummary);
   registerTools(mcpServer, operations, spec);
 
-  const transport = new StdioServerTransport();
-  await mcpServer.connect(transport);
-  console.log(
-    `${serverConfig.name} ready on stdio with ${operations.length} registered tools.`
-  );
+  return mcpServer;
 }
 
-function registerResources(mcpServer, spec, operations) {
+function registerResources(mcpServer, specText, operationsSummary) {
   mcpServer.registerResource(
     'backoffice-openapi',
     'openapi://backoffice/swagger',
@@ -57,7 +183,7 @@ function registerResources(mcpServer, spec, operations) {
         {
           uri: 'openapi://backoffice/swagger',
           mimeType: 'application/json',
-          text: JSON.stringify(spec, null, 2),
+          text: specText,
         },
       ],
     })
@@ -76,7 +202,7 @@ function registerResources(mcpServer, spec, operations) {
         {
           uri: 'openapi://backoffice/operations',
           mimeType: 'text/plain',
-          text: buildOperationsSummary(operations),
+          text: operationsSummary,
         },
       ],
     })
@@ -98,28 +224,30 @@ function registerTools(mcpServer, operations, spec) {
       );
     }
 
-    const annotations = {
-      title: `${operation.method} ${operation.path}`,
-      description: descriptionParts.join(' '),
-      inputSchema: inputShape,
-    };
+    mcpServer.registerTool(
+      operation.id,
+      {
+        title: `${operation.method} ${operation.path}`,
+        description: descriptionParts.join(' '),
+        inputSchema: inputShape,
+      },
+      async (rawInput = {}) => {
+        const parsed = validationSchema.safeParse(rawInput);
+        if (!parsed.success) {
+          return {
+            isError: true,
+            content: [
+              {
+                type: 'text',
+                text: `Input validation failed: ${parsed.error.message}`,
+              },
+            ],
+          };
+        }
 
-    mcpServer.registerTool(operation.id, annotations, async (rawInput = {}) => {
-      const parsed = validationSchema.safeParse(rawInput);
-      if (!parsed.success) {
-        return {
-          isError: true,
-          content: [
-            {
-              type: 'text',
-              text: `Input validation failed: ${parsed.error.message}`,
-            },
-          ],
-        };
+        return executeOperation(operation, parsed.data);
       }
-
-      return executeOperation(operation, parsed.data);
-    });
+    );
   }
 }
 
@@ -172,8 +300,7 @@ async function executeOperation(operation, input) {
 
   const url = buildRequestUrl(baseUrl, operation.path, pathParams);
 
-  const requiresBody = Boolean(operation.requestBody?.required);
-  if (requiresBody && typeof input.body === 'undefined') {
+  if (operation.requestBody?.required && typeof input.body === 'undefined') {
     return {
       isError: true,
       content: [
@@ -224,14 +351,6 @@ async function executeOperation(operation, input) {
       body: input.body,
     });
   }
-}
-
-function buildRequestUrl(baseUrl, apiPath, pathParams) {
-  let resolvedPath = apiPath;
-  for (const [key, value] of Object.entries(pathParams)) {
-    resolvedPath = resolvedPath.replace(`{${key}}`, encodeURIComponent(String(value)));
-  }
-  return `${baseUrl.replace(/\/$/, '')}/${resolvedPath.replace(/^\//, '')}`;
 }
 
 function formatJson(payload) {
@@ -291,7 +410,50 @@ function formatAxiosError(error, requestContext) {
   };
 }
 
+function buildRequestUrl(baseUrl, apiPath, pathParams) {
+  let resolvedPath = apiPath;
+  for (const [key, value] of Object.entries(pathParams)) {
+    resolvedPath = resolvedPath.replace(`{${key}}`, encodeURIComponent(String(value)));
+  }
+  return `${baseUrl.replace(/\/$/, '')}/${resolvedPath.replace(/^\//, '')}`;
+}
+
+function extractSessionId(req) {
+  const headerValue = req.headers['mcp-session-id'];
+  if (Array.isArray(headerValue)) {
+    return headerValue[0];
+  }
+  return headerValue ?? undefined;
+}
+
+function respondWithJsonError(res, statusCode, message) {
+  res.status(statusCode).json({
+    jsonrpc: '2.0',
+    error: {
+      code: -32000,
+      message,
+    },
+    id: null,
+  });
+}
+
+function handleTransportError(res, error) {
+  console.error('MCP transport error:', error);
+  respondWithJsonError(res, 500, error instanceof Error ? error.message : String(error));
+}
+
+async function safeCloseServer(server) {
+  try {
+    await server.close();
+  } catch (error) {
+    if (error) {
+      console.error('Failed to close MCP server session cleanly:', error);
+    }
+  }
+}
+
 main().catch((error) => {
   console.error('Failed to start MCP server:', error);
   process.exit(1);
 });
+

@@ -24,6 +24,13 @@ npm install
 | `BACKOFFICE_TIMEOUT_MS` | Request timeout in milliseconds (defaults to `15000`). |
 | `BACKOFFICE_SERVER_NAME` | Override the MCP server name advertised to clients. |
 | `BACKOFFICE_SERVER_VERSION` | Override the MCP server version advertised to clients. |
+| `BACKOFFICE_HTTP_PORT` | HTTP port for the MCP endpoint (defaults to `3333`). |
+| `BACKOFFICE_HTTP_HOST` | Interface to bind the HTTP server to (defaults to `0.0.0.0`). |
+| `BACKOFFICE_HTTP_PATH` | Path segment for the MCP endpoint (defaults to `/mcp`). |
+| `BACKOFFICE_HTTP_ENABLE_JSON_RESPONSE` | Set to `true` to return JSON responses instead of SSE streams (mainly for debugging). |
+| `BACKOFFICE_HTTP_ALLOWED_HOSTS` | Comma-separated list of allowed `Host` headers when DNS rebinding protection is enabled. |
+| `BACKOFFICE_HTTP_ALLOWED_ORIGINS` | Comma-separated list of allowed `Origin` headers when DNS rebinding protection is enabled. |
+| `BACKOFFICE_HTTP_ENABLE_DNS_REBINDING` | Set to `true` to enable Host/Origin validation for the HTTP transport. |
 
 ### Run the MCP server
 
@@ -33,10 +40,10 @@ BACKOFFICE_AUTHTOKEN="your-token" \
 npm start
 ```
 
-The process listens on **stdio** (the default transport for MCP). When started manually you will see:
+On startup the server exposes a **Streamable HTTP** MCP endpoint. You will see a log similar to:
 
 ```
-BackOffice ERP MCP server ready with <n> tools
+backoffice-erp-mcp listening on http://localhost:3333/mcp
 ```
 
 ### Tool shape
@@ -52,14 +59,14 @@ Responses include both plain JSON output and `structuredContent` containing stat
 
 ### Using the server from n8n
 
-1. Ensure `npm start` is running (or deploy the server somewhere persistent).
-2. In n8n, open **Settings → AI → Tools** and create a new **Model Context Protocol** tool.
-3. Configure the MCP tool:
-   - **Command**: `node`
-   - **Arguments**: `["/absolute/path/to/src/server.js"]`
-   - **Environment variables**: provide `BACKOFFICE_BASE_URL` and (optionally) `BACKOFFICE_AUTH_TOKEN`.
-4. Enable the tool for your preferred AI agent or workflow (e.g. via the AI Agent node).
-5. When the agent runs, every API operation from the swagger file is now directly callable.
+1. Ensure `npm start` is running on the machine that hosts this repository (Docker, VM, or bare metal).
+2. In n8n, add an **AI Agent** (LangChain) to your workflow and open its **Tools** panel.
+3. Drop in an **MCP Client Tool** node and configure it:
+   - **SSE Endpoint**: `http://<host>:<port>/mcp` (for example `http://localhost:3333/mcp`).
+   - **Authentication**: `None` (unless you add protections on the MCP server).
+   - **Tools to Include**: `All` (or specify the subset of API operations you want to expose).
+4. Connect the MCP Client Tool node to the AI Agent node so the agent can invoke it.
+5. Trigger the workflow. When the agent decides to call the MCP server it can invoke any of the generated API tools, passing structured parameters derived from the OpenAPI spec.
 
 ### Customising the OpenAPI source
 
@@ -76,4 +83,5 @@ Responses include both plain JSON output and `structuredContent` containing stat
 
 - Add automated smoke tests that call representative tools against a staging ERP instance.
 - Layer caching or rate limiting if exposing the server publicly.
+
 
