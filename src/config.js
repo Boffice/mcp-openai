@@ -11,6 +11,7 @@ const {
   BACKOFFICE_HTTP_ALLOWED_HOSTS,
   BACKOFFICE_HTTP_ALLOWED_ORIGINS,
   BACKOFFICE_HTTP_ENABLE_DNS_REBINDING,
+  BACKOFFICE_DEBUG_HTTP,
 } = process.env;
 
 const parsedTimeout = BACKOFFICE_TIMEOUT_MS ? Number(BACKOFFICE_TIMEOUT_MS) : NaN;
@@ -48,4 +49,8 @@ export const httpConfig = {
   enableDnsRebindingProtection: BACKOFFICE_HTTP_ENABLE_DNS_REBINDING === 'true',
   allowedHosts: parseList(BACKOFFICE_HTTP_ALLOWED_HOSTS),
   allowedOrigins: parseList(BACKOFFICE_HTTP_ALLOWED_ORIGINS),
+};
+
+export const debugConfig = {
+  http: BACKOFFICE_DEBUG_HTTP === 'true',
 };

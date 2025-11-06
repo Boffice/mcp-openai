@@ -31,6 +31,7 @@ npm install
 | `BACKOFFICE_HTTP_ALLOWED_HOSTS` | Comma-separated list of allowed `Host` headers when DNS rebinding protection is enabled. |
 | `BACKOFFICE_HTTP_ALLOWED_ORIGINS` | Comma-separated list of allowed `Origin` headers when DNS rebinding protection is enabled. |
 | `BACKOFFICE_HTTP_ENABLE_DNS_REBINDING` | Set to `true` to enable Host/Origin validation for the HTTP transport. |
+| `BACKOFFICE_DEBUG_HTTP` | Set to `true` to log outbound HTTP requests/responses (useful for debugging). |
 
 ### Run the MCP server
 
@@ -78,6 +79,8 @@ Responses include both plain JSON output and `structuredContent` containing stat
 - The server relies on `axios` for outbound requests. It forwards response bodies, status codes, and headers to clients so you can inspect failures.
 - Query, header, and body schemas are validated using `zod`, derived from the OpenAPI spec.
 - Unsupported / circular references fallback to `z.any()` to prevent schema generation from blocking startup.
+- Body objects allow additional fields, so you can include undocumented properties (for example `billing_street` or `allowed_payment_modes`) without patching the OpenAPI file.
+- Toggle `BACKOFFICE_DEBUG_HTTP=true` to dump outbound request/response payloads to stdout when you need to compare them against ERP validation errors.
 
 ### Next steps
 

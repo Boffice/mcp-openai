@@ -12,6 +12,7 @@ import {
   apiConfig,
   securityConfig,
   httpConfig,
+  debugConfig,
 } from './config.js';
 import {
   loadOpenApiSpec,
@@ -319,6 +320,23 @@ async function executeOperation(operation, input) {
   }
 
   try {
+    if (debugConfig.http) {
+      console.log(
+        '[MCP DEBUG] Outbound request',
+        JSON.stringify(
+          {
+            method: operation.method,
+            url,
+            headers,
+            params: input.query,
+            body: input.body,
+          },
+          null,
+          2
+        )
+      );
+    }
+
     const response = await axios.request({
       method: operation.method,
       url,
@@ -327,6 +345,22 @@ async function executeOperation(operation, input) {
       data: input.body,
       timeout: apiConfig.timeoutMs,
     });
+
+    if (debugConfig.http) {
+      console.log(
+        '[MCP DEBUG] Response received',
+        JSON.stringify(
+          {
+            status: response.status,
+            statusText: response.statusText,
+            headers: response.headers,
+            data: response.data,
+          },
+          null,
+          2
+        )
+      );
+    }
 
     return {
       content: [
@@ -343,6 +377,9 @@ async function executeOperation(operation, input) {
       },
     };
   } catch (error) {
+    if (debugConfig.http) {
+      console.error('[MCP DEBUG] Request error', error);
+    }
     return formatAxiosError(error, {
       method: operation.method,
       url,
@@ -456,4 +493,3 @@ main().catch((error) => {
   console.error('Failed to start MCP server:', error);
   process.exit(1);
 });
-
