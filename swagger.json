@@ -9300,7 +9300,7 @@
                   "startdate": {
                     "type": "string",
                     "format": "date",
-                    "description": "Mandatory Task Start Date."
+                    "description": "Mandatory Task Start Date if no user prompt use current date."
                   },
                   "is_public": {
                     "type": "string",
@@ -9357,7 +9357,7 @@
                       "expense",
                       "proposal"
                     ],
-                    "description": "Mandatory Task Related."
+                    "description": "Optional Task Related."
                   },
                   "rel_id": {
                     "type": "number",
@@ -9374,9 +9374,7 @@
                 },
                 "required": [
                   "name",
-                  "startdate",
-                  "rel_type",
-                  "rel_id"
+                  "startdate"
                 ]
               }
             }
