@@ -1625,14 +1625,14 @@
                     "description": "Note]                   Optional. Admin Note"
                   },
                   "subtotal": {
-                    "type": "number",
-                    "format": "double",
-                    "description": "Mandatory. calculation based on item Qty, Rate and Tax"
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d{1,2}$",
+                    "description": "Mandatory decimal value as string (e.g. \"500.00\"). calculation based on item Qty, Rate and Tax"
                   },
                   "total": {
-                    "type": "number",
-                    "format": "double",
-                    "description": "Mandatory. calculation based on subtotal, Discount and"
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d{1,2}$",
+                    "description": "Mandatory decimal value as string (e.g. \"500.00\"). calculation based on subtotal, Discount and"
                   },
                   "clientnote": {
                     "type": "string",
@@ -1827,14 +1827,14 @@
                     "description": "Note]                   Optional. Admin Note"
                   },
                   "subtotal": {
-                    "type": "number",
-                    "format": "double",
-                    "description": "Mandatory. calculation based on item Qty, Rate and Tax"
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d{1,2}$",
+                    "description": "Mandatory decimal value as string (e.g. \"500.00\"). calculation based on item Qty, Rate and Tax"
                   },
                   "total": {
-                    "type": "number",
-                    "format": "double",
-                    "description": "Mandatory. calculation based on subtotal, Discount and"
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d{1,2}$",
+                    "description": "Mandatory decimal value as string (e.g. \"500.00\"). calculation based on subtotal, Discount and"
                   },
                   "clientnote": {
                     "type": "string",
